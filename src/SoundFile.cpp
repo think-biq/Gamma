@@ -102,9 +102,9 @@ public:
 	//void format(int v){ mInfo.format = v; }
 
 /*
-When opening a file for read, the format field should be set to zero before 
-calling sf_open(). The only exception to this is the case of RAW files where 
-the caller has to set the samplerate, channels and format fields to valid 
+When opening a file for read, the format field should be set to zero before
+calling sf_open(). The only exception to this is the case of RAW files where
+the caller has to set the samplerate, channels and format fields to valid
 values. All other fields of the structure are filled in by the library.
 */
 
@@ -131,9 +131,12 @@ values. All other fields of the structure are filled in by the library.
 	}
 
 	bool close(){
-		bool didClose = true;
-		if(0 != fp && 0 == sf_close(fp))	fp = 0;
-		else								didClose = false;
+		bool didClose = false;
+		if(0 != fp && 0 == sf_close(fp)) {
+			fp = 0;
+			didClose = true;
+		}
+
 		return didClose;
 	}
 
@@ -263,16 +266,31 @@ public:
 		}
 	}
 
-	bool close(){
-		if(sfinfo == &sfread) sfread.close();
-		if(sfinfo == &sfwrite){
-			sfwrite.save(savePath);
+	bool close() {
+		if (nullptr == sfinfo) {
+			return true;
+		}
+
+		bool r = true;
+
+		if(sfinfo == &sfread) {
+			sfread.close();
+		}
+
+		if(sfinfo == &sfwrite) {
+			if (!sfwrite.save(savePath)) {
+				fprintf(stderr, "Error saving file!\n");
+				r = false;
+			}
 			sfwrite.close();
 		}
-		return true;
+
+		sfinfo = nullptr;
+
+		return r;
 	}
 
-	bool opened() const { return sfinfo; }
+	bool opened() const { return nullptr != sfinfo; }
 
 	bool openRead(const std::string& path){
 		if(sfread.open(path)){
@@ -351,7 +369,7 @@ SoundFile& SoundFile::info(const SoundFile& sf){ mImpl->info(*sf.mImpl); return 
 const char * SoundFile::extension(){ return mImpl->extension(); }
 double SoundFile::frameRate() const { return mImpl->frameRate(); }
 int SoundFile::frames() const { return mImpl->frames(); }
-int SoundFile::channels() const { return mImpl->channels(); }	
+int SoundFile::channels() const { return mImpl->channels(); }
 
 SoundFile& SoundFile::channels(int num){ mImpl->channels(num); return *this; }
 SoundFile& SoundFile::frameRate(double hz){ mImpl->frameRate(hz); return *this; }

@@ -846,7 +846,10 @@ public:
 
 
 	bool save(const std::string& path){
-		if(mFrameData.empty()) return false;
+		if(mFrameData.empty()) {
+			fprintf(stderr, "File had no mFrameData!\n");
+			return false;
+		}
 		/*auto ext = path.substr(path.find_last_of('.'));
 		if(ext.empty()) return false;
 		ext = ext.substr(1);
@@ -856,7 +859,10 @@ public:
 		if("au"==ext || "snd"==ext) mFormat = AU;*/
 
 		mFile.open(path, std::ios::out | std::ios::binary);
-		if(!mFile.is_open()) return false;
+		if(!mFile.is_open()) {
+			fprintf(stderr, "File was not open!\n");
+			return false;
+		}
 
 		if(AU == mFormat){
 			mFile.write(".snd", 4);
@@ -872,7 +878,8 @@ public:
 			case DOUBLE: enc= 7; break;
 			case ULAW:   enc= 1; break;
 			case ALAW:   enc=27; break;
-			default: goto error;
+			default:
+				fprintf(stderr, "Unsupported encoding for .snd! (%d)\n", mEncoding); goto error;
 			}
 			writeBE(mFile, enc);
 			writeBE(mFile, uint32_t(frameRate()));
@@ -890,7 +897,8 @@ public:
 				fmtExtSize=2; factSize=4; enc=6; break;
 			case ULAW:
 				fmtExtSize=2; factSize=4; enc=7; break;
-			default: goto error;
+			default:
+				fprintf(stderr, "Unsupported encoding for .wav! %d\n", mEncoding); goto error;
 			}
 			uint32_t fmtSize = 16 + fmtExtSize;
 			int pad = mFrameData.size()&1;
