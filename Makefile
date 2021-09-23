@@ -59,7 +59,7 @@ EXEC_TARGETS = $(addsuffix *.cpp, $(RUN_DIRS)) $(addsuffix *.c, $(RUN_DIRS)) $(a
 $(EXEC_TARGETS): $(LIB_PATH) FORCE
 	$(CXX) $(ALL_CXXFLAGS) -o $(BIN_DIR)$(*F) $@ $(LIB_PATH) $(LDFLAGS)
 ifneq ($(AUTORUN), 0)
-	@cd $(BIN_DIR) && ./$(*F)
+	@cd $(BIN_DIR) && ./$(*F) $(RUN_ARGS)
 endif
 
 
