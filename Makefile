@@ -57,6 +57,9 @@ include Makefile.rules
 EXEC_TARGETS = $(addsuffix *.cpp, $(RUN_DIRS)) $(addsuffix *.c, $(RUN_DIRS)) $(addsuffix *.mm, $(RUN_DIRS))
 .PRECIOUS: $(EXEC_TARGETS)
 $(EXEC_TARGETS): $(LIB_PATH) FORCE
+	@echo ALL_CXXFLAGS: $(ALL_CXXFLAGS)
+	@echo LIB_PATH: $(LIB_PATH)
+	@echo LDFLAGS: $(LDFLAGS)
 	$(CXX) $(ALL_CXXFLAGS) -o $(BIN_DIR)$(*F) $@ $(LIB_PATH) $(LDFLAGS)
 ifneq ($(AUTORUN), 0)
 	@cd $(BIN_DIR) && ./$(*F) $(RUN_ARGS)
