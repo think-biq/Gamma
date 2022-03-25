@@ -339,6 +339,8 @@ public:
 		out2 = in1*w2 + in2*w1;
 	}
 
+	inline T pos() { return p; }
+
 	/// Set position (constant power law)
 
 	/// This is a constant power pan where the sum of the squares of the two
@@ -348,6 +350,8 @@ public:
 	///
 	/// \param[in] v	Position, in [-1, 1]
 	void pos(T v){
+		p = v;
+
 		static const T c0 = 1./sqrt(2);
 		static const T c1 = 0.5 - c0;
 		static const T c2 =-0.5/c1;
@@ -385,6 +389,7 @@ public:
 
 protected:
 	T w1, w2; // channel weights
+	T p;
 };
 
 
